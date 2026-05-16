@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Farmers Delight Recipes</title>
+<style>
+:root{
+  --bg:#eadccc;
+  --panel:rgba(255,255,255,.88);
+  --text:#202020;
+  --muted:#625c55;
+  --line:rgba(0,0,0,.14);
+  --accent:#126bff;
+  --cyan:#16b9d9;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(234,220,204,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);box-shadow:0 3px 14px rgba(0,0,0,.08);}
+.topbar-inner{width:min(980px,100%);margin:0 auto;padding:8px 12px 7px;display:flex;flex-direction:column;align-items:center;gap:7px;}
+.search-row{display:flex;justify-content:center;width:100%;}
+#search{width:min(520px,100%);border:1px solid var(--line);border-radius:12px;padding:10px 13px;font-size:15px;background:var(--panel);color:var(--text);outline:none;}
+#search:focus{border-color:var(--cyan);box-shadow:0 0 0 4px rgba(30,183,216,.18);}
+.results{display:none;width:min(520px,100%);padding:7px;border:1px solid var(--line);background:var(--panel);border-radius:14px;max-height:260px;overflow:auto;gap:6px;}
+.results.active{display:grid;}
+.result-btn{text-align:left;border:0;border-radius:10px;padding:7px 10px;background:rgba(255,255,255,.62);font-weight:750;cursor:pointer;display:flex;align-items:center;justify-content:flex-start;gap:14px;min-height:39px;width:100%;box-sizing:border-box;}
+.result-icon-frame{width:26px;height:26px;display:grid;place-items:center;flex:0 0 26px;}
+.result-icon{width:26px;height:26px;object-fit:contain;image-rendering:pixelated;transform:scale(1.35);}
+.result-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+.result-btn:hover{background:rgba(30,183,216,.16);}
+.quick-links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;}
+.quick-links a,.hotspot-toggle{padding:6px 9px;border-radius:999px;border:1px solid var(--line);color:var(--text);text-decoration:none;background:rgba(255,255,255,.52);font-size:12px;font-weight:800;cursor:pointer;line-height:1.1;}
+.quick-links a:hover,.hotspot-toggle:hover{background:rgba(255,255,255,.82);}
+.hotspot-toggle.active{border-color:rgba(30,183,216,.9);background:rgba(30,183,216,.2);}
+.wrap{width:min(980px,100%);margin:0 auto;padding:10px 10px 70px;}
+.section-title{margin:18px 0 14px;text-align:center;text-transform:uppercase;font-weight:950;font-size:clamp(24px,4vw,34px);letter-spacing:0;}
+.section-title small{display:block;margin-top:5px;text-transform:none;font-size:clamp(12px,2vw,15px);font-weight:850;color:var(--muted);}
+.entry{margin:0 auto 12px;padding:0 0 10px;max-width:900px;scroll-margin-top:120px;border-bottom:1px solid rgba(69,44,28,.22);}
+.entry.has-attachment{margin-bottom:0;padding-bottom:0;border-bottom:0;}
+.entry.attached-image{margin-top:-7px;padding-top:0;}
+.entry.attached-image.has-attachment{margin-bottom:0;padding-bottom:0;border-bottom:0;}
+.entry.overview-start{margin-bottom:0;padding-bottom:0;border-bottom:0;}
+.entry.overview-continuation{margin-top:0;}
+.entry-title{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 5px;padding:7px 10px;border-radius:11px;background:rgba(255,255,255,.62);border:1px solid var(--line);color:var(--text);font-size:13px;font-weight:850;text-align:center;}
+.entry-title span{flex:1;}
+.entry-title a{display:none;}
+.entry-note{margin:-1px 0 6px;text-align:center;font-size:clamp(12px,2vw,15px);font-weight:850;color:var(--muted);}
+.image-link{display:block;overflow-x:auto;border-radius:6px;background:#f1e3d6;border:1px solid rgba(69,44,28,.16);box-shadow:0 1px 0 rgba(255,255,255,.45);}
+.compact-image-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;max-width:900px;margin:0 auto;}
+.compact-image-grid.two-up{grid-template-columns:repeat(2,minmax(0,1fr));}
+.compact-image-grid .image-link{height:100%;display:grid;place-items:center;}
+.compact-image-grid img{width:100%;height:auto;}
+.image-static{cursor:default;}
+.image-stack{display:grid;gap:5px;}
+img{display:block;width:100%;height:auto;margin:0 auto;}
+.entry.is-match .entry-title{background:rgba(255,255,255,.62);border-color:var(--line);}
+.entry.focused{animation:pulse 1.4s ease-out 1;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(30,183,216,.7);}100%{box-shadow:0 0 0 18px rgba(30,183,216,0);}}
+.no-results{display:none;margin:14px 0;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.5);color:var(--muted);font-weight:700;}
+.no-results.active{display:block;}
+.site-footer{max-width:900px;margin:28px auto 0;padding:14px 10px 0;border-top:1px solid rgba(69,44,28,.22);text-align:center;color:var(--muted);font-size:12px;font-weight:750;}
+.site-footer a{color:var(--muted);font-weight:900;}
+.hotspot-frame{position:relative;display:block;overflow:hidden;border-radius:4px;background:#f1e3d6;}
+.hotspot-frame img{pointer-events:none;user-select:none;}
+.hotspot{position:absolute;transform:translate(-50%,-50%);border-radius:999px;cursor:pointer;background:rgba(30,183,216,0);transition:background .12s ease,box-shadow .12s ease;}
+.hotspot:hover,.hotspot:focus-visible{background:rgba(30,183,216,.12);box-shadow:0 0 0 3px rgba(30,183,216,.16);outline:none;}
+.hotspot::before{content:"";position:absolute;left:50%;top:50%;width:0;height:0;transform:translate(-50%,-50%);border-radius:999px;transition:.12s ease;}
+body.show-hotspots .hotspot::before{width:12px;height:12px;border:2px solid rgba(30,183,216,.98);background:rgba(30,183,216,.22);box-shadow:0 0 0 2px rgba(0,0,0,.25);}
+body.show-hotspots .hotspot:hover::before{width:17px;height:17px;background:rgba(30,183,216,.34);}
+.hotspot::after{content:attr(data-label);position:absolute;left:50%;bottom:calc(100% + 7px);transform:translateX(-50%);padding:5px 7px;border-radius:8px;background:rgba(20,20,20,.93);color:white;font-size:12px;font-weight:850;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .12s ease;z-index:5;}
+.hotspot:hover::after,.hotspot:focus-visible::after{opacity:1;}
+#backToTop{position:fixed;right:18px;bottom:18px;z-index:30;width:46px;height:46px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.9);box-shadow:0 8px 24px rgba(0,0,0,.2);color:var(--text);cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:.18s ease;display:grid;place-items:center;}
+#backToTop svg{width:22px;height:22px;stroke:currentColor;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+#backToTop.visible{opacity:1;pointer-events:auto;transform:translateY(0);}
+@media(max-width:700px){.topbar-inner{padding:7px 7px 6px;gap:6px;}#search{font-size:14px;padding:9px 11px;width:min(430px,100%);} .wrap{padding:7px 4px 45px;} .quick-links{gap:5px;}.quick-links a,.hotspot-toggle{font-size:11px;padding:6px 8px;}.entry{margin-bottom:9px;padding-bottom:8px;scroll-margin-top:112px;}.entry-title{font-size:12px;padding:6px 8px;border-radius:9px;}.hotspot::after{display:none;}#backToTop{right:12px;bottom:12px;width:42px;height:42px;}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner">
+<div class="search-row"><input id="search" type="search" autocomplete="off" placeholder="Szukaj np. Stove, Cooking Pot, Hamburger, Rich Soil..." aria-label="Szukaj receptury"></div>
+<div class="results" id="results"></div>
+<nav class="quick-links"><a href="#items-blocks">Items / Blocks</a><a href="#food-drinks">Food And Drinks</a><a href="#img-005-png">Stove</a><a href="#img-006-png">Cooking Pot</a><a href="#img-035-png">Rich Soil</a><a href="#img-073-png">Hamburger</a><a href="#img-094-png">Pasta</a><button id="hotspotToggle" class="hotspot-toggle" type="button">Pokaż klikane pola</button></nav>
+</div></header>
+<main class="wrap">
+<section id="items-blocks"><h2 class="section-title">Items / Blocks / Food And Drinks<small>Click an item to jump to its recipe or information.</small></h2>
+      <figure class="entry overview-start" id="img-000-png" data-title="Overview - Items / Blocks" data-search="overview - items / blocks farmers delight recipes item block overview icons items blocks 000.png">
+        <a class="image-link" href="media/000.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/000.png" width="825" height="989" alt="Overview - Items / Blocks">
+        </a>
+      </figure>
+      <figure class="entry overview-continuation" id="img-001-png" data-title="Overview - Food And Drinks" data-search="overview - food and drinks farmers delight food drinks overview icons meals recipes 001.png">
+        <a class="image-link" href="media/001.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/001.png" width="829" height="626" alt="Overview - Food And Drinks">
+        </a>
+      </figure>
+<h2 class="section-title">Items / Blocks</h2>
+      <figure class="entry" id="img-005-png" data-title="Stove" data-search="stove stove brick iron campfire cooking block 005.png">
+        <div class="entry-title"><span>Stove</span><a href="#img-005-png">#</a></div>
+        <a class="image-link" href="media/005.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/005.png" width="1079" height="313" alt="Stove">
+        </a>
+      </figure>
+      <figure class="entry" id="img-006-png" data-title="Cooking Pot" data-search="cooking pot cooking pot empty iron brick bucket shovel 006.png">
+        <div class="entry-title"><span>Cooking Pot</span><a href="#img-006-png">#</a></div>
+        <a class="image-link" href="media/006.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/006.png" width="1080" height="316" alt="Cooking Pot">
+        </a>
+      </figure>
+      <figure class="entry" id="img-007-png" data-title="Skillet" data-search="skillet skillet pan weapon attack damage speed 007.png">
+        <div class="entry-title"><span>Skillet</span><a href="#img-007-png">#</a></div>
+        <a class="image-link" href="media/007.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/007.png" width="1113" height="412" alt="Skillet">
+        </a>
+      </figure>
+      <figure class="entry" id="img-014-jpg" data-title="Stove - In Game Preview" data-search="stove - in game preview stove cooking pot preview smoke 014.jpg">
+        <div class="entry-title"><span>Stove - In Game Preview</span><a href="#img-014-jpg">#</a></div>
+        <a class="image-link" href="media/014.jpg" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/014.jpg" width="1658" height="1170" alt="Stove - In Game Preview">
+        </a>
+      </figure>
+      <figure class="entry has-attachment" id="img-030-png" data-title="Flint Knife" data-search="flint knife flint knife knife weapon straw animals secondary drops 030.png">
+        <div class="entry-title"><span>Flint Knife</span><a href="#img-030-png">#</a></div>
+        <p class="entry-note">Use the matching material to craft iron, diamond, netherite and golden variants.</p>
+        <a class="image-link" href="media/030.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/030.png" width="1158" height="472" alt="Flint Knife">
+        </a>
+      </figure>
+      <figure class="entry attached-image" id="img-112-png" data-title="Knives - Description" data-search="knives - description knives knife lightweight melee weapon straw animal drops 112.png">
+        <a class="image-link" href="media/112.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/112.png" width="500" height="245" alt="Knives - Description">
+        </a>
+      </figure>
+      <figure class="entry" id="img-008-png" data-title="Cutting Board" data-search="cutting board cutting board sticks planks wood 008.png">
+        <div class="entry-title"><span>Cutting Board</span><a href="#img-008-png">#</a></div>
+        <a class="image-link" href="media/008.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/008.png" width="1077" height="319" alt="Cutting Board">
+        </a>
+      </figure>
+      <figure class="entry has-attachment" id="img-032-png" data-title="Cabbage Leaf / Cut Cabbage" data-search="cabbage leaf / cut cabbage cabbage cabbage leaf knife cutting board 032.png cabbage_on_board.png">
+        <div class="entry-title"><span>Cabbage Leaf / Cut Cabbage</span><a href="#img-032-png">#</a></div>
+        <a class="image-link" href="media/cabbage_on_board.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/cabbage_on_board.png" width="927" height="533" alt="Cabbage On Cutting Board - In Game Preview">
+        </a>
+      </figure>
+      <figure class="entry attached-image" id="img-cabbage-on-board-png" data-title="Cabbage On Cutting Board - In Game Preview" data-search="cabbage on cutting board in game preview cabbage leaf cut cabbage cutting board cabbage_on_board.png">
+        <a class="image-link" href="media/032.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/032.png" width="713" height="360" alt="Cabbage Leaf / Cut Cabbage">
+        </a>
+      </figure>
+      <figure class="entry" id="img-031-png" data-title="Tree Bark" data-search="tree bark tree bark bark axe logs wood 031.png wood on cutting board paper bark_to_paper.png wood_on_board.png">
+        <div class="entry-title"><span>Tree Bark</span><a href="#img-031-png">#</a></div>
+        <p class="entry-note">Place any log type on a Cutting Board, hold an axe, and right-click to strip it into bark.</p>
+        <div class="compact-image-grid two-up">
+          <div id="img-wood-on-board-png">
+            <a class="image-link" href="media/wood_on_board.png" target="_blank" title="Otwórz pełny rozmiar">
+              <img loading="lazy" src="media/wood_on_board.png" width="1116" height="768" alt="Wood On Cutting Board - In Game Preview">
+            </a>
+          </div>
+          <div id="img-bark-to-paper-png">
+            <a class="image-link" href="media/bark_to_paper.png" target="_blank" title="Otwórz pełny rozmiar">
+              <img loading="lazy" src="media/bark_to_paper.png" width="536" height="231" alt="Tree Bark To Paper">
+            </a>
+          </div>
+        </div>
+        <a class="image-link" href="media/031.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/031.png" width="1068" height="729" alt="Tree Bark">
+        </a>
+      </figure>
+      <figure class="entry" id="img-009-png" data-title="Basket" data-search="basket basket bamboo canvas storage 009.png">
+        <div class="entry-title"><span>Basket</span><a href="#img-009-png">#</a></div>
+        <p class="entry-note">Works a bit like a hopper: throw items into it to collect drops, useful during long fishing sessions.</p>
+        <a class="image-link" href="media/009.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/009.png" width="1070" height="327" alt="Basket">
+        </a>
+      </figure>
+      <figure class="entry" id="img-food-crate-png" data-title="Food Crate" data-search="food crate food crate carrots carrot storage crate rice bale bag of rice food_crate.png rice_bale.png bag_of_rice.png">
+        <div class="entry-title"><span>Food Crate</span><a href="#img-food-crate-png">#</a></div>
+        <p class="entry-note">Use the matching crop to craft its crate block; rice can be packed into a rice bale.</p>
+        <div class="compact-image-grid">
+          <div id="img-food-crate-recipe-png">
+            <a class="image-link" href="media/food_crate.png" target="_blank" title="Otwórz pełny rozmiar">
+              <img loading="lazy" src="media/food_crate.png" width="252" height="110" alt="Food Crate">
+            </a>
+          </div>
+          <div id="img-rice-bale-png">
+            <a class="image-link" href="media/rice_bale.png" target="_blank" title="Otwórz pełny rozmiar">
+              <img loading="lazy" src="media/rice_bale.png" width="521" height="221" alt="Rice Bale">
+            </a>
+          </div>
+          <div id="img-bag-of-rice-png">
+            <a class="image-link" href="media/bag_of_rice.png" target="_blank" title="Otwórz pełny rozmiar">
+              <img loading="lazy" src="media/bag_of_rice.png" width="495" height="222" alt="Bag Of Rice">
+            </a>
+          </div>
+        </div>
+      </figure>
+      <figure class="entry" id="img-011-png" data-title="Canvas" data-search="canvas canvas straw dry plant fiber 011.png">
+        <div class="entry-title"><span>Canvas</span><a href="#img-011-png">#</a></div>
+        <a class="image-link" href="media/011.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/011.png" width="1073" height="323" alt="Canvas">
+        </a>
+      </figure>
+      <figure class="entry" id="img-010-png" data-title="Straw" data-search="straw straw dry plant fiber crops plants knife 010.png">
+        <div class="entry-title"><span>Straw</span><a href="#img-010-png">#</a></div>
+        <a class="image-link" href="media/010.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/010.png" width="926" height="385" alt="Straw">
+        </a>
+      </figure>
+      <figure class="entry" id="img-016-png" data-title="Straw Bale" data-search="straw bale straw bale hay bale 016.png">
+        <div class="entry-title"><span>Straw Bale</span><a href="#img-016-png">#</a></div>
+        <a class="image-link" href="media/016.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/016.png" width="1053" height="323" alt="Straw Bale">
+        </a>
+      </figure>
+      <figure class="entry" id="img-018-png" data-title="Rope" data-search="rope rope straw 018.png">
+        <div class="entry-title"><span>Rope</span><a href="#img-018-png">#</a></div>
+        <a class="image-link" href="media/018.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/018.png" width="1073" height="313" alt="Rope">
+        </a>
+      </figure>
+      <figure class="entry" id="img-017-png" data-title="Safety Net" data-search="safety net safety net rope 017.png">
+        <div class="entry-title"><span>Safety Net</span><a href="#img-017-png">#</a></div>
+        <a class="image-link" href="media/017.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/017.png" width="1043" height="339" alt="Safety Net">
+        </a>
+      </figure>
+      <figure class="entry" id="img-002-jpg" data-title="Safety Net - In Game Preview" data-search="safety net - in game preview safety net preview fall protection 002.jpg">
+        <div class="entry-title"><span>Safety Net - In Game Preview</span><a href="#img-002-jpg">#</a></div>
+        <a class="image-link" href="media/002.jpg" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/002.jpg" width="1249" height="1302" alt="Safety Net - In Game Preview">
+        </a>
+      </figure>
+      <figure class="entry" id="img-019-png" data-title="Oak Cabinet" data-search="oak cabinet oak cabinet storage 019.png">
+        <div class="entry-title"><span>Oak Cabinet</span><a href="#img-019-png">#</a></div>
+        <a class="image-link" href="media/019.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/019.png" width="1067" height="321" alt="Oak Cabinet">
+        </a>
+      </figure>
+      <figure class="entry" id="img-020-png" data-title="Spruce Cabinet" data-search="spruce cabinet spruce cabinet storage 020.png">
+        <div class="entry-title"><span>Spruce Cabinet</span><a href="#img-020-png">#</a></div>
+        <a class="image-link" href="media/020.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/020.png" width="1055" height="329" alt="Spruce Cabinet">
+        </a>
+      </figure>
+      <figure class="entry" id="img-021-png" data-title="Birch Cabinet" data-search="birch cabinet birch cabinet storage 021.png">
+        <div class="entry-title"><span>Birch Cabinet</span><a href="#img-021-png">#</a></div>
+        <a class="image-link" href="media/021.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/021.png" width="1072" height="319" alt="Birch Cabinet">
+        </a>
+      </figure>
+      <figure class="entry" id="img-022-png" data-title="Jungle Cabinet" data-search="jungle cabinet jungle cabinet storage 022.png">
+        <div class="entry-title"><span>Jungle Cabinet</span><a href="#img-022-png">#</a></div>
+        <a class="image-link" href="media/022.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/022.png" width="1072" height="326" alt="Jungle Cabinet">
+        </a>
+      </figure>
+      <figure class="entry" id="img-023-png" data-title="Acacia Cabinet" data-search="acacia cabinet acacia cabinet storage 023.png">
+        <div class="entry-title"><span>Acacia Cabinet</span><a href="#img-023-png">#</a></div>
+        <a class="image-link" href="media/023.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/023.png" width="1065" height="326" alt="Acacia Cabinet">
+        </a>
+      </figure>
+      <figure class="entry" id="img-024-png" data-title="Dark Oak Cabinet" data-search="dark oak cabinet dark oak cabinet storage 024.png">
+        <div class="entry-title"><span>Dark Oak Cabinet</span><a href="#img-024-png">#</a></div>
+        <a class="image-link" href="media/024.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/024.png" width="1115" height="318" alt="Dark Oak Cabinet">
+        </a>
+      </figure>
+      <figure class="entry" id="img-025-png" data-title="Crimson Cabinet" data-search="crimson cabinet crimson cabinet storage nether 025.png">
+        <div class="entry-title"><span>Crimson Cabinet</span><a href="#img-025-png">#</a></div>
+        <a class="image-link" href="media/025.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/025.png" width="1089" height="329" alt="Crimson Cabinet">
+        </a>
+      </figure>
+      <figure class="entry" id="img-026-png" data-title="Warped Cabinet" data-search="warped cabinet warped cabinet storage nether 026.png">
+        <div class="entry-title"><span>Warped Cabinet</span><a href="#img-026-png">#</a></div>
+        <a class="image-link" href="media/026.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/026.png" width="1077" height="314" alt="Warped Cabinet">
+        </a>
+      </figure>
+      <figure class="entry" id="img-114-png" data-title="Tatami Block / Full Tatami Mat" data-search="tatami block / full tatami mat tatami block full tatami mat straw canvas 114.png">
+        <div class="entry-title"><span>Tatami Block / Full Tatami Mat</span><a href="#img-114-png">#</a></div>
+        <a class="image-link" href="media/114.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/114.png" width="634" height="406" alt="Tatami Block / Full Tatami Mat">
+        </a>
+      </figure>
+      <figure class="entry" id="img-028-png" data-title="Full Tatami Mat" data-search="full tatami mat full tatami mat tatami 028.png">
+        <div class="entry-title"><span>Full Tatami Mat</span><a href="#img-028-png">#</a></div>
+        <a class="image-link" href="media/028.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/028.png" width="1070" height="325" alt="Full Tatami Mat">
+        </a>
+      </figure>
+      <figure class="entry" id="img-003-jpg" data-title="Tatami / Cabinets - In Game Preview" data-search="tatami / cabinets - in game preview tatami block full tatami mat cabinets cabinet 003.jpg">
+        <div class="entry-title"><span>Tatami / Cabinets - In Game Preview</span><a href="#img-003-jpg">#</a></div>
+        <a class="image-link" href="media/003.jpg" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/003.jpg" width="1325" height="611" alt="Tatami / Cabinets - In Game Preview">
+        </a>
+      </figure>
+      <figure class="entry" id="img-033-png" data-title="Organic Compost" data-search="organic compost organic compost dirt straw bone meal rotten flesh rich soil 033.png">
+        <div class="entry-title"><span>Organic Compost</span><a href="#img-033-png">#</a></div>
+        <a class="image-link" href="media/033.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/033.png" width="1087" height="711" alt="Organic Compost">
+        </a>
+      </figure>
+      <figure class="entry has-attachment" id="img-035-png" data-title="Rich Soil" data-search="rich soil rich soil organic compost mushroom weathering 035.png">
+        <div class="entry-title"><span>Rich Soil</span><a href="#img-035-png">#</a></div>
+        <a class="image-link" href="media/035.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/035.png" width="1088" height="468" alt="Rich Soil">
+        </a>
+      </figure>
+      <figure class="entry attached-image" id="img-013-jpg" data-title="Rich Soil - Crop Growth Description" data-search="rich soil - crop growth description rich soil crop growth bone meal farmland crops plants 013.jpg">
+        <a class="image-link" href="media/013.jpg" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/013.jpg" width="1410" height="1137" alt="Rich Soil - Crop Growth Description">
+        </a>
+      </figure>
+      <figure class="entry" id="img-004-png" data-title="Mushroom Colonies - In Game Preview" data-search="mushroom colonies - in game preview mushroom colonies rich soil mushrooms colony 004.png">
+        <div class="entry-title"><span>Mushroom Colonies - In Game Preview</span><a href="#img-004-png">#</a></div>
+        <a class="image-link" href="media/004.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/004.png" width="829" height="795" alt="Mushroom Colonies - In Game Preview">
+        </a>
+      </figure>
+      <figure class="entry" id="img-012-jpg" data-title="Mushroom Colonies - Description" data-search="mushroom colonies - description mushroom colonies rich soil description growth stages 012.jpg">
+        <div class="entry-title"><span>Mushroom Colonies - Description</span><a href="#img-012-jpg">#</a></div>
+        <a class="image-link" href="media/012.jpg" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/012.jpg" width="5564" height="1708" alt="Mushroom Colonies - Description">
+        </a>
+      </figure>
+      <figure class="entry" id="img-034-png" data-title="Canvas Sign" data-search="canvas sign canvas sign sign canvas 034.png">
+        <div class="entry-title"><span>Canvas Sign</span><a href="#img-034-png">#</a></div>
+        <a class="image-link" href="media/034.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/034.png" width="1123" height="351" alt="Canvas Sign">
+        </a>
+      </figure>
+      <figure class="entry" id="img-036-png" data-title="White Canvas Sign" data-search="white canvas sign white canvas sign canvas sign dye 036.png">
+        <div class="entry-title"><span>White Canvas Sign</span><a href="#img-036-png">#</a></div>
+        <a class="image-link" href="media/036.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/036.png" width="1116" height="333" alt="White Canvas Sign">
+        </a>
+      </figure>
+</section>
+<section id="food-drinks"><h2 class="section-title">Food And Drinks</h2>
+      <figure class="entry" id="img-037-png" data-title="Food And Drinks - In Game Preview" data-search="food and drinks - in game preview food drinks meals table stove cooking pot preview 037.png">
+        <div class="entry-title"><span>Food And Drinks - In Game Preview</span><a href="#img-037-png">#</a></div>
+        <a class="image-link" href="media/037.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/037.png" width="1415" height="1083" alt="Food And Drinks - In Game Preview">
+        </a>
+      </figure>
+      <figure class="entry" id="img-027-png" data-title="Effects: Nourishment / Comfort" data-search="effects: nourishment / comfort nourishment comfort effect effects food drinks hunger saturation slowness weakness 027.png">
+        <div class="entry-title"><span>Effects: Nourishment / Comfort</span><a href="#img-027-png">#</a></div>
+        <a class="image-link" href="media/027.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/027.png" width="6779" height="558" alt="Effects: Nourishment / Comfort">
+        </a>
+      </figure>
+      <figure class="entry" id="img-015-jpg" data-title="Wild Crops / Plants - In Game Preview" data-search="wild crops / plants - in game preview wild crops plants tomato cabbage onion rice flowers food drinks 015.jpg">
+        <div class="entry-title"><span>Wild Crops / Plants - In Game Preview</span><a href="#img-015-jpg">#</a></div>
+        <p class="entry-note">Seeds can be found in loot chests, such as mineshafts. Wild vegetables spawn naturally in the world and can be turned into seeds. Rice needs a water block next to the planting spot.</p>
+        <a class="image-link" href="media/015.jpg" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/015.jpg" width="2291" height="1060" alt="Wild Crops / Plants - In Game Preview">
+        </a>
+      </figure>
+      <figure class="entry" id="img-122-jpg" data-title="Tomato Vines - Growth / Harvest Preview" data-search="tomato vines growth harvest preview vine maximum blocks yield red plump tomato 122.jpg 121.jpg">
+        <div class="entry-title"><span>Tomato Vines - Growth / Harvest Preview</span><a href="#img-122-jpg">#</a></div>
+        <p class="entry-note">Sometimes tomato vines drop a Rotten Tomato, which can be thrown at players.</p>
+        <div class="image-stack">
+          <a class="image-link" href="media/122.jpg" target="_blank" title="Otwórz pełny rozmiar">
+            <img loading="lazy" src="media/122.jpg" width="2400" height="1080" alt="Tomato Vines - Growth Preview">
+          </a>
+          <a class="image-link" href="media/121.jpg" target="_blank" title="Otwórz pełny rozmiar">
+            <img loading="lazy" src="media/121.jpg" width="2400" height="1080" alt="Tomato Vines - Harvest Preview">
+          </a>
+        </div>
+      </figure>
+      <figure class="entry" id="img-043-png" data-title="Tomato Sauce" data-search="tomato sauce tomato sauce cooking pot tomato bowl 043.png">
+        <div class="entry-title"><span>Tomato Sauce</span><a href="#img-043-png">#</a></div>
+        <a class="image-link" href="media/043.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/043.png" width="1106" height="323" alt="Tomato Sauce">
+        </a>
+      </figure>
+      <figure class="entry" id="img-040-png" data-title="Hot Cocoa" data-search="hot cocoa hot cocoa clears harmful effect milk cocoa 040.png">
+        <div class="entry-title"><span>Hot Cocoa</span><a href="#img-040-png">#</a></div>
+        <a class="image-link" href="media/040.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/040.png" width="1244" height="318" alt="Hot Cocoa">
+        </a>
+      </figure>
+      <figure class="entry" id="img-041-png" data-title="Apple Cider" data-search="apple cider apple cider absorption apple drink 041.png">
+        <div class="entry-title"><span>Apple Cider</span><a href="#img-041-png">#</a></div>
+        <a class="image-link" href="media/041.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/041.png" width="1097" height="328" alt="Apple Cider">
+        </a>
+      </figure>
+      <figure class="entry" id="img-066-png" data-title="Glow Berry Custard" data-search="glow berry custard glow berry custard milk egg sugar 066.png">
+        <div class="entry-title"><span>Glow Berry Custard</span><a href="#img-066-png">#</a></div>
+        <a class="image-link" href="media/066.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/066.png" width="1155" height="318" alt="Glow Berry Custard">
+        </a>
+      </figure>
+      <figure class="entry" id="img-042-png" data-title="Melon Juice" data-search="melon juice melon juice minor instant health drink 042.png">
+        <div class="entry-title"><span>Melon Juice</span><a href="#img-042-png">#</a></div>
+        <a class="image-link" href="media/042.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/042.png" width="1147" height="327" alt="Melon Juice">
+        </a>
+      </figure>
+      <figure class="entry" id="img-046-png" data-title="Minced Beef" data-search="minced beef minced beef beef knife cutting board 046.png">
+        <div class="entry-title"><span>Minced Beef</span><a href="#img-046-png">#</a></div>
+        <a class="image-link" href="media/046.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/046.png" width="1030" height="357" alt="Minced Beef">
+        </a>
+      </figure>
+      <figure class="entry" id="img-048-png" data-title="Steak / Cooked Beef" data-search="steak / cooked beef steak cooked beef beef stove food 048.png">
+        <div class="entry-title"><span>Steak / Cooked Beef</span><a href="#img-048-png">#</a></div>
+        <a class="image-link" href="media/048.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/048.png" width="482" height="331" alt="Steak / Cooked Beef">
+        </a>
+      </figure>
+      <figure class="entry" id="img-049-png" data-title="Raw Chicken Cuts" data-search="raw chicken cuts raw chicken cuts chicken knife 049.png">
+        <div class="entry-title"><span>Raw Chicken Cuts</span><a href="#img-049-png">#</a></div>
+        <p class="entry-note">Cook it to get the cooked version.</p>
+        <a class="image-link" href="media/049.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/049.png" width="984" height="336" alt="Raw Chicken Cuts">
+        </a>
+      </figure>
+      <figure class="entry" id="img-050-png" data-title="Raw Bacon" data-search="raw bacon raw bacon bacon pork knife 050.png">
+        <div class="entry-title"><span>Raw Bacon</span><a href="#img-050-png">#</a></div>
+        <p class="entry-note">Cook it to get Baked Bacon.</p>
+        <a class="image-link" href="media/050.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/050.png" width="1039" height="339" alt="Raw Bacon">
+        </a>
+      </figure>
+      <figure class="entry" id="img-051-png" data-title="Raw Cod Slice" data-search="raw cod slice raw cod slice cod fish knife 051.png">
+        <div class="entry-title"><span>Raw Cod Slice</span><a href="#img-051-png">#</a></div>
+        <p class="entry-note">Cook it to get the cooked version.</p>
+        <a class="image-link" href="media/051.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/051.png" width="980" height="344" alt="Raw Cod Slice">
+        </a>
+      </figure>
+      <figure class="entry" id="img-052-png" data-title="Raw Salmon Slice" data-search="raw salmon slice raw salmon slice salmon fish knife 052.png">
+        <div class="entry-title"><span>Raw Salmon Slice</span><a href="#img-052-png">#</a></div>
+        <p class="entry-note">Cook it to get the cooked version.</p>
+        <a class="image-link" href="media/052.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/052.png" width="983" height="335" alt="Raw Salmon Slice">
+        </a>
+      </figure>
+      <figure class="entry" id="img-053-png" data-title="Raw Mutton Chops" data-search="raw mutton chops raw mutton chops mutton knife 053.png">
+        <div class="entry-title"><span>Raw Mutton Chops</span><a href="#img-053-png">#</a></div>
+        <p class="entry-note">Cook it to get the cooked version.</p>
+        <a class="image-link" href="media/053.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/053.png" width="1055" height="339" alt="Raw Mutton Chops">
+        </a>
+      </figure>
+      <figure class="entry" id="img-054-png" data-title="Ham" data-search="ham ham hoglin pig leg meat knife 054.png">
+        <div class="entry-title"><span>Ham</span><a href="#img-054-png">#</a></div>
+        <a class="image-link" href="media/054.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/054.png" width="976" height="377" alt="Ham">
+        </a>
+      </figure>
+      <figure class="entry" id="img-038-png" data-title="Fried Egg" data-search="fried egg fried egg egg stove 038.png">
+        <div class="entry-title"><span>Fried Egg</span><a href="#img-038-png">#</a></div>
+        <a class="image-link" href="media/038.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/038.png" width="970" height="338" alt="Fried Egg">
+        </a>
+      </figure>
+      <figure class="entry" id="img-044-png" data-title="Wheat Dough" data-search="wheat dough wheat dough dough wheat water bucket egg 044.png">
+        <div class="entry-title"><span>Wheat Dough</span><a href="#img-044-png">#</a></div>
+        <a class="image-link" href="media/044.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/044.png" width="1066" height="719" alt="Wheat Dough">
+        </a>
+      </figure>
+      <figure class="entry" id="img-045-png" data-title="Raw Pasta" data-search="raw pasta raw pasta pasta wheat dough knife 045.png">
+        <div class="entry-title"><span>Raw Pasta</span><a href="#img-045-png">#</a></div>
+        <a class="image-link" href="media/045.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/045.png" width="1033" height="344" alt="Raw Pasta">
+        </a>
+      </figure>
+      <figure class="entry" id="img-092-png" data-title="Noodle Soup" data-search="noodle soup noodle soup comfort raw pasta mutton kelp 092.png">
+        <div class="entry-title"><span>Noodle Soup</span><a href="#img-092-png">#</a></div>
+        <a class="image-link" href="media/092.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/092.png" width="1053" height="334" alt="Noodle Soup">
+        </a>
+      </figure>
+      <figure class="entry" id="img-094-png" data-title="Pasta With Meatballs" data-search="pasta with meatballs pasta with meatballs nourishment raw pasta minced beef tomato sauce 094.png">
+        <div class="entry-title"><span>Pasta With Meatballs</span><a href="#img-094-png">#</a></div>
+        <a class="image-link" href="media/094.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/094.png" width="1166" height="336" alt="Pasta With Meatballs">
+        </a>
+      </figure>
+      <figure class="entry" id="img-095-png" data-title="Pasta With Mutton Chop" data-search="pasta with mutton chop pasta with mutton chop nourishment raw pasta mutton tomato sauce 095.png">
+        <div class="entry-title"><span>Pasta With Mutton Chop</span><a href="#img-095-png">#</a></div>
+        <a class="image-link" href="media/095.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/095.png" width="1236" height="333" alt="Pasta With Mutton Chop">
+        </a>
+      </figure>
+      <figure class="entry" id="img-101-png" data-title="Squid Ink Pasta" data-search="squid ink pasta squid ink pasta nourishment raw pasta squid ink tomato 101.png">
+        <div class="entry-title"><span>Squid Ink Pasta</span><a href="#img-101-png">#</a></div>
+        <a class="image-link" href="media/101.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/101.png" width="1118" height="328" alt="Squid Ink Pasta">
+        </a>
+      </figure>
+      <figure class="entry" id="img-098-png" data-title="Vegetable Noodles" data-search="vegetable noodles vegetable noodles nourishment raw pasta carrot mushroom cabbage beetroot 098.png">
+        <div class="entry-title"><span>Vegetable Noodles</span><a href="#img-098-png">#</a></div>
+        <a class="image-link" href="media/098.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/098.png" width="1117" height="335" alt="Vegetable Noodles">
+        </a>
+      </figure>
+      <figure class="entry" id="img-039-png" data-title="Milk Bottle" data-search="milk bottle milk bottle clears effect bucket glass bottle 039.png">
+        <div class="entry-title"><span>Milk Bottle</span><a href="#img-039-png">#</a></div>
+        <a class="image-link" href="media/039.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/039.png" width="1081" height="326" alt="Milk Bottle">
+        </a>
+      </figure>
+      <figure class="entry" id="img-055-png" data-title="Pie Crust" data-search="pie crust pie crust wheat dough milk 055.png">
+        <div class="entry-title"><span>Pie Crust</span><a href="#img-055-png">#</a></div>
+        <a class="image-link" href="media/055.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/055.png" width="1091" height="329" alt="Pie Crust">
+        </a>
+      </figure>
+      <figure class="entry" id="img-056-png" data-title="Apple Pie" data-search="apple pie apple pie slice 056.png">
+        <div class="entry-title"><span>Apple Pie</span><a href="#img-056-png">#</a></div>
+        <a class="image-link" href="media/056.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/056.png" width="1100" height="711" alt="Apple Pie">
+        </a>
+      </figure>
+      <figure class="entry" id="img-057-png" data-title="Sweet Berry Cheesecake" data-search="sweet berry cheesecake sweet berry cheesecake cake pie 057.png">
+        <div class="entry-title"><span>Sweet Berry Cheesecake</span><a href="#img-057-png">#</a></div>
+        <a class="image-link" href="media/057.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/057.png" width="1272" height="707" alt="Sweet Berry Cheesecake">
+        </a>
+      </figure>
+      <figure class="entry" id="img-058-png" data-title="Chocolate Pie" data-search="chocolate pie chocolate pie cocoa 058.png">
+        <div class="entry-title"><span>Chocolate Pie</span><a href="#img-058-png">#</a></div>
+        <a class="image-link" href="media/058.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/058.png" width="1048" height="702" alt="Chocolate Pie">
+        </a>
+      </figure>
+      <figure class="entry" id="img-059-png" data-title="Slice Of Cake" data-search="slice of cake slice of cake cake knife 059.png">
+        <div class="entry-title"><span>Slice Of Cake</span><a href="#img-059-png">#</a></div>
+        <a class="image-link" href="media/059.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/059.png" width="1042" height="339" alt="Slice Of Cake">
+        </a>
+      </figure>
+      <figure class="entry" id="img-060-png" data-title="Slice Of Apple Pie" data-search="slice of apple pie slice of apple pie apple pie knife 060.png">
+        <div class="entry-title"><span>Slice Of Apple Pie</span><a href="#img-060-png">#</a></div>
+        <a class="image-link" href="media/060.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/060.png" width="1082" height="343" alt="Slice Of Apple Pie">
+        </a>
+      </figure>
+      <figure class="entry" id="img-061-png" data-title="Slice Of Sweet Berry Cheesecake" data-search="slice of sweet berry cheesecake slice of sweet berry cheesecake knife 061.png">
+        <div class="entry-title"><span>Slice Of Sweet Berry Cheesecake</span><a href="#img-061-png">#</a></div>
+        <a class="image-link" href="media/061.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/061.png" width="1459" height="334" alt="Slice Of Sweet Berry Cheesecake">
+        </a>
+      </figure>
+      <figure class="entry" id="img-062-png" data-title="Slice Of Chocolate Pie" data-search="slice of chocolate pie slice of chocolate pie knife 062.png">
+        <div class="entry-title"><span>Slice Of Chocolate Pie</span><a href="#img-062-png">#</a></div>
+        <a class="image-link" href="media/062.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/062.png" width="1171" height="326" alt="Slice Of Chocolate Pie">
+        </a>
+      </figure>
+      <figure class="entry" id="img-047-png" data-title="Pumpkin Slice" data-search="pumpkin slice pumpkin slice pumpkin knife 047.png">
+        <div class="entry-title"><span>Pumpkin Slice</span><a href="#img-047-png">#</a></div>
+        <a class="image-link" href="media/047.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/047.png" width="1045" height="344" alt="Pumpkin Slice">
+        </a>
+      </figure>
+      <figure class="entry" id="img-063-png" data-title="Sweet Berry Cookie" data-search="sweet berry cookie sweet berry cookie cookie 063.png">
+        <div class="entry-title"><span>Sweet Berry Cookie</span><a href="#img-063-png">#</a></div>
+        <a class="image-link" href="media/063.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/063.png" width="1194" height="324" alt="Sweet Berry Cookie">
+        </a>
+      </figure>
+      <figure class="entry" id="img-064-png" data-title="Honey Cookie" data-search="honey cookie honey cookie cookie 064.png">
+        <div class="entry-title"><span>Honey Cookie</span><a href="#img-064-png">#</a></div>
+        <a class="image-link" href="media/064.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/064.png" width="1066" height="319" alt="Honey Cookie">
+        </a>
+      </figure>
+      <figure class="entry" id="img-065-png" data-title="Melon Popsicle" data-search="melon popsicle melon popsicle ice stick 065.png">
+        <div class="entry-title"><span>Melon Popsicle</span><a href="#img-065-png">#</a></div>
+        <a class="image-link" href="media/065.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/065.png" width="1061" height="319" alt="Melon Popsicle">
+        </a>
+      </figure>
+      <figure class="entry" id="img-067-png" data-title="Fruit Salad" data-search="fruit salad fruit salad regeneration apple melon pumpkin bowl 067.png">
+        <div class="entry-title"><span>Fruit Salad</span><a href="#img-067-png">#</a></div>
+        <a class="image-link" href="media/067.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/067.png" width="1148" height="324" alt="Fruit Salad">
+        </a>
+      </figure>
+      <figure class="entry" id="img-068-png" data-title="Mixed Salad" data-search="mixed salad mixed salad regeneration cabbage tomato beetroot bowl 068.png">
+        <div class="entry-title"><span>Mixed Salad</span><a href="#img-068-png">#</a></div>
+        <a class="image-link" href="media/068.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/068.png" width="1147" height="331" alt="Mixed Salad">
+        </a>
+      </figure>
+      <figure class="entry" id="img-069-png" data-title="Nether Salad" data-search="nether salad nether salad warped fungus crimson fungus bowl 069.png">
+        <div class="entry-title"><span>Nether Salad</span><a href="#img-069-png">#</a></div>
+        <a class="image-link" href="media/069.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/069.png" width="1069" height="308" alt="Nether Salad">
+        </a>
+      </figure>
+      <figure class="entry" id="img-070-png" data-title="Barbecue On A Stick" data-search="barbecue on a stick barbecue on a stick tomato onion beef stick 070.png">
+        <div class="entry-title"><span>Barbecue On A Stick</span><a href="#img-070-png">#</a></div>
+        <a class="image-link" href="media/070.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/070.png" width="1148" height="322" alt="Barbecue On A Stick">
+        </a>
+      </figure>
+      <figure class="entry" id="img-077-png" data-title="Stuffed Potato" data-search="stuffed potato stuffed potato baked potato beef milk 077.png">
+        <div class="entry-title"><span>Stuffed Potato</span><a href="#img-077-png">#</a></div>
+        <a class="image-link" href="media/077.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/077.png" width="1074" height="327" alt="Stuffed Potato">
+        </a>
+      </figure>
+      <figure class="entry" id="img-071-png" data-title="Egg Sandwich" data-search="egg sandwich egg sandwich bread fried egg 071.png">
+        <div class="entry-title"><span>Egg Sandwich</span><a href="#img-071-png">#</a></div>
+        <a class="image-link" href="media/071.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/071.png" width="1064" height="320" alt="Egg Sandwich">
+        </a>
+      </figure>
+      <figure class="entry" id="img-072-png" data-title="Chicken Sandwich" data-search="chicken sandwich chicken sandwich bread chicken cabbage carrot 072.png">
+        <div class="entry-title"><span>Chicken Sandwich</span><a href="#img-072-png">#</a></div>
+        <a class="image-link" href="media/072.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/072.png" width="1084" height="338" alt="Chicken Sandwich">
+        </a>
+      </figure>
+      <figure class="entry" id="img-073-png" data-title="Hamburger" data-search="hamburger hamburger beef tomato cabbage onion bread 073.png">
+        <div class="entry-title"><span>Hamburger</span><a href="#img-073-png">#</a></div>
+        <a class="image-link" href="media/073.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/073.png" width="1095" height="326" alt="Hamburger">
+        </a>
+      </figure>
+      <figure class="entry" id="img-074-png" data-title="Bacon Sandwich" data-search="bacon sandwich bacon sandwich bread bacon lettuce tomato 074.png">
+        <div class="entry-title"><span>Bacon Sandwich</span><a href="#img-074-png">#</a></div>
+        <a class="image-link" href="media/074.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/074.png" width="1067" height="313" alt="Bacon Sandwich">
+        </a>
+      </figure>
+      <figure class="entry" id="img-075-png" data-title="Mutton Wrap" data-search="mutton wrap mutton wrap cabbage onion bread 075.png">
+        <div class="entry-title"><span>Mutton Wrap</span><a href="#img-075-png">#</a></div>
+        <a class="image-link" href="media/075.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/075.png" width="1087" height="322" alt="Mutton Wrap">
+        </a>
+      </figure>
+      <figure class="entry" id="img-102-png" data-title="Grilled Salmon" data-search="grilled salmon grilled salmon nourishment salmon cabbage onion 102.png">
+        <div class="entry-title"><span>Grilled Salmon</span><a href="#img-102-png">#</a></div>
+        <a class="image-link" href="media/102.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/102.png" width="1107" height="320" alt="Grilled Salmon">
+        </a>
+      </figure>
+      <figure class="entry" id="img-076-png" data-title="Dumplings" data-search="dumplings dumplings chicken cabbage onion dough cooking pot 076.png">
+        <div class="entry-title"><span>Dumplings</span><a href="#img-076-png">#</a></div>
+        <a class="image-link" href="media/076.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/076.png" width="1071" height="334" alt="Dumplings">
+        </a>
+      </figure>
+      <figure class="entry" id="img-078-png" data-title="Cabbage Rolls" data-search="cabbage rolls cabbage rolls cooking pot cabbage rice 078.png">
+        <div class="entry-title"><span>Cabbage Rolls</span><a href="#img-078-png">#</a></div>
+        <a class="image-link" href="media/078.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/078.png" width="1091" height="333" alt="Cabbage Rolls">
+        </a>
+      </figure>
+      <figure class="entry" id="img-079-png" data-title="Salmon Roll" data-search="salmon roll salmon roll rice salmon 079.png">
+        <div class="entry-title"><span>Salmon Roll</span><a href="#img-079-png">#</a></div>
+        <a class="image-link" href="media/079.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/079.png" width="1065" height="322" alt="Salmon Roll">
+        </a>
+      </figure>
+      <figure class="entry" id="img-080-png" data-title="Cod Roll" data-search="cod roll cod roll rice cod 080.png">
+        <div class="entry-title"><span>Cod Roll</span><a href="#img-080-png">#</a></div>
+        <a class="image-link" href="media/080.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/080.png" width="1058" height="317" alt="Cod Roll">
+        </a>
+      </figure>
+      <figure class="entry" id="img-081-png" data-title="Kelp Roll" data-search="kelp roll kelp roll rice carrot dried kelp 081.png">
+        <div class="entry-title"><span>Kelp Roll</span><a href="#img-081-png">#</a></div>
+        <a class="image-link" href="media/081.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/081.png" width="1076" height="326" alt="Kelp Roll">
+        </a>
+      </figure>
+      <figure class="entry" id="img-082-png" data-title="Kelp Roll Slice" data-search="kelp roll slice kelp roll slice knife 082.png">
+        <div class="entry-title"><span>Kelp Roll Slice</span><a href="#img-082-png">#</a></div>
+        <a class="image-link" href="media/082.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/082.png" width="1026" height="348" alt="Kelp Roll Slice">
+        </a>
+      </figure>
+      <figure class="entry" id="img-107-png" data-title="Rice Roll Medley" data-search="rice roll medley rice roll medley salmon roll cod roll kelp roll 107.png">
+        <div class="entry-title"><span>Rice Roll Medley</span><a href="#img-107-png">#</a></div>
+        <a class="image-link" href="media/107.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/107.png" width="1103" height="340" alt="Rice Roll Medley">
+        </a>
+      </figure>
+      <figure class="entry" id="img-110-png" data-title="Rice Rolls - In Game Preview" data-search="rice rolls - in game preview rice roll medley sushi salmon roll cod roll kelp roll preview 110.png">
+        <div class="entry-title"><span>Rice Rolls - In Game Preview</span><a href="#img-110-png">#</a></div>
+        <a class="image-link" href="media/110.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/110.png" width="1890" height="728" alt="Rice Rolls - In Game Preview">
+        </a>
+      </figure>
+      <figure class="entry" id="img-111-png" data-title="Food Table - In Game Preview" data-search="food table - in game preview food table meal preview rice rolls 111.png">
+        <div class="entry-title"><span>Food Table - In Game Preview</span><a href="#img-111-png">#</a></div>
+        <a class="image-link" href="media/111.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/111.png" width="2519" height="1195" alt="Food Table - In Game Preview">
+        </a>
+      </figure>
+      <figure class="entry" id="img-083-png" data-title="Cooked Rice" data-search="cooked rice cooked rice comfort rice cooking pot 083.png">
+        <div class="entry-title"><span>Cooked Rice</span><a href="#img-083-png">#</a></div>
+        <a class="image-link" href="media/083.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/083.png" width="1072" height="334" alt="Cooked Rice">
+        </a>
+      </figure>
+      <figure class="entry" id="img-084-png" data-title="Bone Broth" data-search="bone broth bone broth comfort bone cooking pot 084.png">
+        <div class="entry-title"><span>Bone Broth</span><a href="#img-084-png">#</a></div>
+        <a class="image-link" href="media/084.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/084.png" width="1073" height="325" alt="Bone Broth">
+        </a>
+      </figure>
+      <figure class="entry" id="img-085-png" data-title="Beef Stew" data-search="beef stew beef stew comfort beef carrot potato cooking pot 085.png">
+        <div class="entry-title"><span>Beef Stew</span><a href="#img-085-png">#</a></div>
+        <a class="image-link" href="media/085.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/085.png" width="1118" height="331" alt="Beef Stew">
+        </a>
+      </figure>
+      <figure class="entry" id="img-086-png" data-title="Chicken Soup" data-search="chicken soup chicken soup comfort chicken carrot cabbage cooking pot 086.png">
+        <div class="entry-title"><span>Chicken Soup</span><a href="#img-086-png">#</a></div>
+        <a class="image-link" href="media/086.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/086.png" width="1075" height="322" alt="Chicken Soup">
+        </a>
+      </figure>
+      <figure class="entry" id="img-087-png" data-title="Vegetable Soup" data-search="vegetable soup vegetable soup comfort carrot potato beetroot cooking pot 087.png">
+        <div class="entry-title"><span>Vegetable Soup</span><a href="#img-087-png">#</a></div>
+        <a class="image-link" href="media/087.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/087.png" width="1080" height="330" alt="Vegetable Soup">
+        </a>
+      </figure>
+      <figure class="entry" id="img-088-png" data-title="Fish Stew" data-search="fish stew fish stew comfort cod salmon tomato cooking pot 088.png">
+        <div class="entry-title"><span>Fish Stew</span><a href="#img-088-png">#</a></div>
+        <a class="image-link" href="media/088.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/088.png" width="1103" height="326" alt="Fish Stew">
+        </a>
+      </figure>
+      <figure class="entry" id="img-089-png" data-title="Fried Rice" data-search="fried rice fried rice comfort rice egg carrot cooking pot 089.png">
+        <div class="entry-title"><span>Fried Rice</span><a href="#img-089-png">#</a></div>
+        <a class="image-link" href="media/089.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/089.png" width="1055" height="318" alt="Fried Rice">
+        </a>
+      </figure>
+      <figure class="entry" id="img-090-png" data-title="Pumpkin Soup" data-search="pumpkin soup pumpkin soup comfort pumpkin milk cooking pot 090.png">
+        <div class="entry-title"><span>Pumpkin Soup</span><a href="#img-090-png">#</a></div>
+        <a class="image-link" href="media/090.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/090.png" width="1048" height="332" alt="Pumpkin Soup">
+        </a>
+      </figure>
+      <figure class="entry" id="img-091-png" data-title="Baked Cod Stew" data-search="baked cod stew baked cod stew comfort cod tomato egg 091.png">
+        <div class="entry-title"><span>Baked Cod Stew</span><a href="#img-091-png">#</a></div>
+        <a class="image-link" href="media/091.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/091.png" width="1065" height="325" alt="Baked Cod Stew">
+        </a>
+      </figure>
+      <figure class="entry" id="img-093-png" data-title="Bacon And Eggs" data-search="bacon and eggs bacon and eggs nourishment bacon fried egg bowl 093.png">
+        <div class="entry-title"><span>Bacon And Eggs</span><a href="#img-093-png">#</a></div>
+        <a class="image-link" href="media/093.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/093.png" width="1121" height="329" alt="Bacon And Eggs">
+        </a>
+      </figure>
+      <figure class="entry" id="img-096-png" data-title="Mushroom Rice" data-search="mushroom rice mushroom rice nourishment mushroom carrot rice 096.png">
+        <div class="entry-title"><span>Mushroom Rice</span><a href="#img-096-png">#</a></div>
+        <a class="image-link" href="media/096.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/096.png" width="1136" height="325" alt="Mushroom Rice">
+        </a>
+      </figure>
+      <figure class="entry" id="img-097-png" data-title="Roasted Mutton Chops" data-search="roasted mutton chops roasted mutton chops nourishment mutton tomato onion 097.png">
+        <div class="entry-title"><span>Roasted Mutton Chops</span><a href="#img-097-png">#</a></div>
+        <a class="image-link" href="media/097.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/097.png" width="1200" height="332" alt="Roasted Mutton Chops">
+        </a>
+      </figure>
+      <figure class="entry" id="img-099-png" data-title="Steak And Potatoes" data-search="steak and potatoes steak and potatoes nourishment steak potato carrot 099.png">
+        <div class="entry-title"><span>Steak And Potatoes</span><a href="#img-099-png">#</a></div>
+        <a class="image-link" href="media/099.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/099.png" width="1165" height="318" alt="Steak And Potatoes">
+        </a>
+      </figure>
+      <figure class="entry" id="img-100-png" data-title="Ratatouille" data-search="ratatouille ratatouille nourishment tomato onion potato cooking pot 100.png">
+        <div class="entry-title"><span>Ratatouille</span><a href="#img-100-png">#</a></div>
+        <a class="image-link" href="media/100.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/100.png" width="1122" height="331" alt="Ratatouille">
+        </a>
+      </figure>
+      <figure class="entry" id="img-103-png" data-title="Roast Chicken" data-search="roast chicken roast chicken chicken potato carrot onion 103.png">
+        <div class="entry-title"><span>Roast Chicken</span><a href="#img-103-png">#</a></div>
+        <p class="entry-note">This is a multi-stage feast item; keep eating it to work through its portions.</p>
+        <a class="image-link" href="media/103.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/103.png" width="1057" height="309" alt="Roast Chicken">
+        </a>
+      </figure>
+      <figure class="entry" id="img-104-png" data-title="Stuffed Pumpkin" data-search="stuffed pumpkin stuffed pumpkin pumpkin rice mushroom cranberry 104.png">
+        <div class="entry-title"><span>Stuffed Pumpkin</span><a href="#img-104-png">#</a></div>
+        <p class="entry-note">You can serve portions from it into empty bowls.</p>
+        <a class="image-link" href="media/104.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/104.png" width="1112" height="347" alt="Stuffed Pumpkin">
+        </a>
+      </figure>
+      <figure class="entry" id="img-105-png" data-title="Honey Glazed Ham" data-search="honey glazed ham honey glazed ham ham honey 105.png">
+        <div class="entry-title"><span>Honey Glazed Ham</span><a href="#img-105-png">#</a></div>
+        <p class="entry-note">The served version is eaten in portions from the full feast.</p>
+        <a class="image-link" href="media/105.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/105.png" width="1111" height="323" alt="Honey Glazed Ham">
+        </a>
+      </figure>
+      <figure class="entry" id="img-106-png" data-title="Shepherd&#x27;s Pie" data-search="shepherd&#x27;s pie shepherd&#x27;s pie shepherds pie beef potato pie crust 106.png">
+        <div class="entry-title"><span>Shepherd&#x27;s Pie</span><a href="#img-106-png">#</a></div>
+        <p class="entry-note">The served version is eaten in portions from the full pie.</p>
+        <a class="image-link" href="media/106.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/106.png" width="1072" height="329" alt="Shepherd&#x27;s Pie">
+        </a>
+      </figure>
+      <figure class="entry" id="img-108-png" data-title="Dog Food" data-search="dog food dog food tamed wolf strength resistance farmers delight 108.png">
+        <div class="entry-title"><span>Dog Food</span><a href="#img-108-png">#</a></div>
+        <a class="image-link" href="media/108.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/108.png" width="1279" height="403" alt="Dog Food">
+        </a>
+      </figure>
+      <figure class="entry" id="img-109-png" data-title="Horse Feed" data-search="horse feed horse feed tamed mount speed jump boost 109.png">
+        <div class="entry-title"><span>Horse Feed</span><a href="#img-109-png">#</a></div>
+        <a class="image-link" href="media/109.png" target="_blank" title="Otwórz pełny rozmiar">
+          <img loading="lazy" src="media/109.png" width="1324" height="376" alt="Horse Feed">
+        </a>
+      </figure>
+</section>
+<div class="no-results" id="noResults">Nie znaleziono takiej nazwy. Spróbuj wpisać po angielsku, np. <b>Stove</b>, <b>Rich Soil</b>, <b>Hamburger</b>.</div>
+<footer class="site-footer">Additional information can also be found on <a href="https://farmersdelight.fandom.com/wiki/Farmer%27s_Delight_Wiki" target="_blank" rel="noopener">Farmer's Delight Wiki</a>.</footer>
+</main>
+<button id="backToTop" type="button" title="Wroc na gore" aria-label="Wroc na gore">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M3 11.5 12 4l9 7.5"></path>
+    <path d="M5.5 10.5V20h13v-9.5"></path>
+    <path d="M9.5 20v-6h5v6"></path>
+  </svg>
+</button>
+<script>
+
+const hotspotData={"img-000-png":[["Stove","img-005-png",37.7,5.55,5.9,5.9],["Cooking Pot","img-006-png",49.25,5.55,5.9,5.9],["Skillet","img-007-png",60.75,5.55,5.9,5.9],["Cutting Board","img-008-png",72.35,5.75,5.9,5.9],["Basket","img-009-png",83.75,5.45,5.9,5.9],["Straw Bale","img-016-png",84.55,14.65,5.9,5.9],["Safety Net","img-017-png",95.05,14.65,5.9,5.9],["Oak Cabinet","img-019-png",5.55,24.45,5.9,5.9],["Spruce Cabinet","img-020-png",16.6,24.45,5.9,5.9],["Birch Cabinet","img-021-png",27.85,24.45,5.9,5.9],["Jungle Cabinet","img-022-png",39.0,24.45,5.9,5.9],["Acacia Cabinet","img-023-png",50.35,24.45,5.9,5.9],["Dark Oak Cabinet","img-024-png",61.65,24.45,5.9,5.9],["Crimson Cabinet","img-025-png",73.0,24.45,5.9,5.9],["Warped Cabinet","img-026-png",84.35,24.45,5.9,5.9],["Tatami Block / Full Tatami Mat","img-114-png",95.0,24.45,5.9,5.9],["Canvas","img-011-png",5.55,33.95,5.9,5.9],["Canvas","img-011-png",16.6,33.95,5.9,5.9],["Straw","img-010-png",27.75,33.95,5.9,5.9],["Organic Compost","img-033-png",39.0,33.95,5.9,5.9],["Rich Soil","img-035-png",50.25,33.95,5.9,5.9],["Rope","img-018-png",72.7,33.95,5.9,5.9],["Canvas Sign","img-034-png",84.25,33.95,5.9,5.9],["White Canvas Sign","img-036-png",95.05,33.95,5.9,5.9],["Canvas Sign","img-034-png",5.55,40.35,5.9,5.9],["Canvas Sign","img-034-png",16.6,40.35,5.9,5.9],["Canvas Sign","img-034-png",27.8,40.35,5.9,5.9],["Canvas Sign","img-034-png",38.95,40.35,5.9,5.9],["Canvas Sign","img-034-png",50.3,40.35,5.9,5.9],["Canvas Sign","img-034-png",61.65,40.35,5.9,5.9],["Canvas Sign","img-034-png",73.05,40.35,5.9,5.9],["Canvas Sign","img-034-png",84.4,40.35,5.9,5.9],["Canvas Sign","img-034-png",95.0,40.35,5.9,5.9],["Canvas Sign","img-034-png",5.55,49.1,5.9,5.9],["Canvas Sign","img-034-png",16.6,49.1,5.9,5.9],["Canvas Sign","img-034-png",27.8,49.1,5.9,5.9],["Canvas Sign","img-034-png",38.95,49.1,5.9,5.9],["Canvas Sign","img-034-png",50.3,49.1,5.9,5.9],["White Canvas Sign","img-036-png",61.65,49.1,5.9,5.9],["Flint Knife","img-030-png",73.05,49.1,5.9,5.9],["Knives - Description","img-112-png",84.4,49.1,5.9,5.9],["Knives - Description","img-112-png",95.0,49.1,5.9,5.9],["Knives - Description","img-112-png",5.55,58.25,5.9,5.9],["Flint Knife","img-030-png",16.6,58.25,5.9,5.9],["Straw","img-010-png",27.8,58.25,5.9,5.9],["Canvas","img-011-png",38.95,58.25,5.9,5.9],["Straw","img-010-png",50.3,58.25,5.9,5.9],["Cabbage Leaf / Cut Cabbage","img-032-png",72.7,67.35,5.9,5.9],["Tomato Sauce","img-043-png",84.25,67.35,5.9,5.9],["Rich Soil","img-035-png",50.3,77.25,5.9,5.9],["Fried Egg","img-038-png",61.65,77.25,5.9,5.9],["Milk Bottle","img-039-png",73.05,77.25,5.9,5.9],["Hot Cocoa","img-040-png",84.4,77.25,5.9,5.9],["Apple Cider","img-041-png",95.0,77.25,5.9,5.9],["Tomato Sauce","img-043-png",16.6,86.15,5.9,5.9],["Wheat Dough","img-044-png",27.8,86.15,5.9,5.9],["Raw Pasta","img-045-png",38.95,86.15,5.9,5.9],["Pumpkin Slice","img-047-png",50.3,86.15,5.9,5.9],["Cabbage Leaf / Cut Cabbage","img-032-png",61.65,86.15,5.9,5.9],["Minced Beef","img-046-png",73.05,86.15,5.9,5.9],["Steak / Cooked Beef","img-048-png",84.4,86.15,5.9,5.9],["Raw Chicken Cuts","img-049-png",95.0,86.15,5.9,5.9],["Raw Bacon","img-050-png",16.6,95.05,5.9,5.9],["Raw Mutton Chops","img-053-png",27.8,95.05,5.9,5.9],["Raw Cod Slice","img-051-png",38.95,95.05,5.9,5.9],["Raw Salmon Slice","img-052-png",50.3,95.05,5.9,5.9]],"img-001-png":[["Ham","img-054-png",7.25,6.1,6.8,6.8],["Honey Glazed Ham","img-105-png",18.35,6.1,6.8,6.8],["Pie Crust","img-055-png",29.45,6.1,6.8,6.8],["Apple Pie","img-056-png",40.55,6.1,6.8,6.8],["Sweet Berry Cheesecake","img-057-png",51.6,6.1,6.8,6.8],["Chocolate Pie","img-058-png",62.7,6.1,6.8,6.8],["Slice Of Cake","img-059-png",73.8,6.1,6.8,6.8],["Slice Of Apple Pie","img-060-png",84.85,6.1,6.8,6.8],["Slice Of Sweet Berry Cheesecake","img-061-png",95.75,6.1,6.8,6.8],["Slice Of Chocolate Pie","img-062-png",7.25,20.05,6.8,6.8],["Sweet Berry Cookie","img-063-png",18.35,20.05,6.8,6.8],["Honey Cookie","img-064-png",29.45,20.05,6.8,6.8],["Melon Popsicle","img-065-png",40.55,20.05,6.8,6.8],["Glow Berry Custard","img-066-png",51.6,20.05,6.8,6.8],["Fruit Salad","img-067-png",62.7,20.05,6.8,6.8],["Mixed Salad","img-068-png",73.8,20.05,6.8,6.8],["Nether Salad","img-069-png",84.85,20.05,6.8,6.8],["Barbecue On A Stick","img-070-png",95.75,20.05,6.8,6.8],["Stuffed Potato","img-077-png",7.25,34.35,6.8,6.8],["Egg Sandwich","img-071-png",18.35,34.35,6.8,6.8],["Chicken Sandwich","img-072-png",29.45,34.35,6.8,6.8],["Hamburger","img-073-png",40.55,34.35,6.8,6.8],["Bacon Sandwich","img-074-png",51.6,34.35,6.8,6.8],["Mutton Wrap","img-075-png",62.7,34.35,6.8,6.8],["Grilled Salmon","img-102-png",73.8,34.35,6.8,6.8],["Dumplings","img-076-png",84.85,34.35,6.8,6.8],["Cabbage Rolls","img-078-png",95.75,34.35,6.8,6.8],["Salmon Roll","img-079-png",7.25,49.05,6.8,6.8],["Cod Roll","img-080-png",18.35,49.05,6.8,6.8],["Kelp Roll","img-081-png",29.45,49.05,6.8,6.8],["Kelp Roll Slice","img-082-png",40.55,49.05,6.8,6.8],["Cooked Rice","img-083-png",51.6,49.05,6.8,6.8],["Bone Broth","img-084-png",62.7,49.05,6.8,6.8],["Beef Stew","img-085-png",73.8,49.05,6.8,6.8],["Chicken Soup","img-086-png",84.85,49.05,6.8,6.8],["Vegetable Soup","img-087-png",95.75,49.05,6.8,6.8],["Fish Stew","img-088-png",7.25,63.75,6.8,6.8],["Fried Rice","img-089-png",18.35,63.75,6.8,6.8],["Pumpkin Soup","img-090-png",29.45,63.75,6.8,6.8],["Baked Cod Stew","img-091-png",40.55,63.75,6.8,6.8],["Bacon And Eggs","img-093-png",51.6,63.75,6.8,6.8],["Mushroom Rice","img-096-png",62.7,63.75,6.8,6.8],["Roasted Mutton Chops","img-097-png",73.8,63.75,6.8,6.8],["Steak And Potatoes","img-099-png",84.85,63.75,6.8,6.8],["Ratatouille","img-100-png",95.75,63.75,6.8,6.8],["Vegetable Noodles","img-098-png",7.25,78.55,6.8,6.8],["Noodle Soup","img-092-png",18.35,78.55,6.8,6.8],["Pasta With Meatballs","img-094-png",29.45,78.55,6.8,6.8],["Squid Ink Pasta","img-101-png",40.55,78.55,6.8,6.8],["Grilled Salmon","img-102-png",51.6,78.55,6.8,6.8],["Dumplings","img-076-png",62.7,78.55,6.8,6.8],["Cabbage Rolls","img-078-png",73.8,78.55,6.8,6.8],["Stuffed Pumpkin","img-104-png",84.85,78.55,6.8,6.8],["Ratatouille","img-100-png",95.75,78.55,6.8,6.8],["Roast Chicken","img-103-png",7.25,93.15,6.8,6.8],["Stuffed Pumpkin","img-104-png",18.35,93.15,6.8,6.8],["Honey Glazed Ham","img-105-png",29.45,93.15,6.8,6.8],["Shepherd's Pie","img-106-png",40.55,93.15,6.8,6.8],["Rice Roll Medley","img-107-png",51.6,93.15,6.8,6.8],["Dog Food","img-108-png",62.7,93.15,6.8,6.8],["Horse Feed","img-109-png",73.8,93.15,6.8,6.8]]};
+const foodOverviewSandwichRow=new Set(["Stuffed Potato","Egg Sandwich","Chicken Sandwich","Hamburger","Bacon Sandwich","Mutton Wrap","Grilled Salmon","Dumplings","Cabbage Rolls"]);
+hotspotData["img-001-png"]=hotspotData["img-001-png"].filter(([label,,x,y])=>!(foodOverviewSandwichRow.has(label)&&y===34.35));
+hotspotData["img-001-png"].push(
+  ["Egg Sandwich","img-071-png",7.25,34.35,6.8,6.8],
+  ["Chicken Sandwich","img-072-png",18.35,34.35,6.8,6.8],
+  ["Hamburger","img-073-png",29.45,34.35,6.8,6.8],
+  ["Bacon Sandwich","img-074-png",40.55,34.35,6.8,6.8],
+  ["Mutton Wrap","img-075-png",51.6,34.35,6.8,6.8],
+  ["Dumplings","img-076-png",62.7,34.35,6.8,6.8],
+  ["Stuffed Potato","img-077-png",73.8,34.35,6.8,6.8],
+  ["Cabbage Rolls","img-078-png",84.85,34.35,6.8,6.8],
+  ["Salmon Roll","img-079-png",95.75,34.35,6.8,6.8]
+);
+const foodOverviewRollSoupRow=new Set(["Salmon Roll","Cod Roll","Kelp Roll","Kelp Roll Slice","Cooked Rice","Bone Broth","Beef Stew","Chicken Soup","Vegetable Soup","Fish Stew"]);
+hotspotData["img-001-png"]=hotspotData["img-001-png"].filter(([label,,x,y])=>!(foodOverviewRollSoupRow.has(label)&&y===49.05));
+hotspotData["img-001-png"].push(
+  ["Cod Roll","img-080-png",7.25,49.05,6.8,6.8],
+  ["Kelp Roll","img-081-png",18.35,49.05,6.8,6.8],
+  ["Kelp Roll Slice","img-082-png",29.45,49.05,6.8,6.8],
+  ["Cooked Rice","img-083-png",40.55,49.05,6.8,6.8],
+  ["Bone Broth","img-084-png",51.6,49.05,6.8,6.8],
+  ["Beef Stew","img-085-png",62.7,49.05,6.8,6.8],
+  ["Chicken Soup","img-086-png",73.8,49.05,6.8,6.8],
+  ["Vegetable Soup","img-087-png",84.85,49.05,6.8,6.8],
+  ["Fish Stew","img-088-png",95.75,49.05,6.8,6.8]
+);
+const foodOverviewStewMealRow=new Set(["Fish Stew","Fried Rice","Pumpkin Soup","Baked Cod Stew","Bacon And Eggs","Mushroom Rice","Roasted Mutton Chops","Steak And Potatoes","Ratatouille","Vegetable Noodles","Noodle Soup","Pasta With Meatballs","Squid Ink Pasta","Grilled Salmon","Roast Chicken"]);
+hotspotData["img-001-png"]=hotspotData["img-001-png"].filter(([label,,x,y])=>!(foodOverviewStewMealRow.has(label)&&y===63.75));
+hotspotData["img-001-png"].push(
+  ["Fried Rice","img-089-png",7.25,63.75,6.8,6.8],
+  ["Pumpkin Soup","img-090-png",18.35,63.75,6.8,6.8],
+  ["Baked Cod Stew","img-091-png",29.45,63.75,6.8,6.8],
+  ["Noodle Soup","img-092-png",40.55,63.75,6.8,6.8],
+  ["Bacon And Eggs","img-093-png",51.6,63.75,6.8,6.8],
+  ["Pasta With Meatballs","img-094-png",62.7,63.75,6.8,6.8],
+  ["Pasta With Mutton Chop","img-095-png",73.8,63.75,6.8,6.8],
+  ["Mushroom Rice","img-096-png",84.85,63.75,6.8,6.8],
+  ["Roasted Mutton Chops","img-097-png",95.75,63.75,6.8,6.8]
+);
+hotspotData["img-001-png"]=hotspotData["img-001-png"].filter(([label,,x,y])=>!(y===78.55&&x>=18&&x<=30&&["Noodle Soup","Pasta With Meatballs","Steak And Potatoes","Ratatouille"].includes(label)));
+hotspotData["img-001-png"].push(
+  ["Steak And Potatoes","img-099-png",18.35,78.55,6.8,6.8],
+  ["Ratatouille","img-100-png",29.45,78.55,6.8,6.8]
+);
+hotspotData["img-001-png"]=hotspotData["img-001-png"].filter(([label,,x,y])=>!(y===78.55&&x>=51&&["Grilled Salmon","Dumplings","Cabbage Rolls","Stuffed Pumpkin","Ratatouille","Roast Chicken"].includes(label)));
+hotspotData["img-001-png"].push(
+  ["Grilled Salmon","img-102-png",51.6,78.55,6.8,6.8],
+  ["Roast Chicken","img-103-png",62.7,78.55,6.8,6.8],
+  ["Roast Chicken","img-103-png",73.8,78.55,6.8,6.8],
+  ["Stuffed Pumpkin","img-104-png",84.85,78.55,6.8,6.8],
+  ["Stuffed Pumpkin","img-104-png",95.75,78.55,6.8,6.8]
+);
+hotspotData["img-001-png"]=hotspotData["img-001-png"].filter(([label,,x,y])=>!(label==="Noodle Soup"&&y===78.55));
+hotspotData["img-001-png"]=hotspotData["img-001-png"].filter(([label,,x,y])=>!(y===93.15&&x<=41&&["Roast Chicken","Stuffed Pumpkin","Honey Glazed Ham","Shepherd's Pie"].includes(label)));
+hotspotData["img-001-png"].push(
+  ["Honey Glazed Ham","img-105-png",7.25,93.15,6.8,6.8],
+  ["Honey Glazed Ham","img-105-png",18.35,93.15,6.8,6.8],
+  ["Shepherd's Pie","img-106-png",29.45,93.15,6.8,6.8],
+  ["Shepherd's Pie","img-106-png",40.55,93.15,6.8,6.8]
+);
+hotspotData["img-000-png"].push(
+  ["Food Crate","img-food-crate-png",95.05,5.55,5.9,5.9],
+  ["Food Crate","img-food-crate-png",5.55,14.65,5.9,5.9],
+  ["Food Crate","img-food-crate-png",16.6,14.65,5.9,5.9],
+  ["Food Crate","img-food-crate-png",27.85,14.65,5.9,5.9],
+  ["Food Crate","img-food-crate-png",39.0,14.65,5.9,5.9],
+  ["Food Crate","img-food-crate-png",50.35,14.65,5.9,5.9],
+  ["Rice Bale","img-rice-bale-png",61.65,14.65,5.9,5.9],
+  ["Bag Of Rice","img-bag-of-rice-png",72.7,14.65,5.9,5.9],
+  ["Rich Soil","img-035-png",61.65,33.95,5.9,5.9],
+  ["Tomato Vines - Growth / Harvest Preview","img-122-jpg",84.25,67.35,5.9,5.9],
+  ["Tomato Vines - Growth / Harvest Preview","img-122-jpg",50.3,77.25,5.9,5.9],
+  ["Melon Juice","img-042-png",5.55,86.15,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",61.65,86.15,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",61.65,58.25,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",72.7,58.25,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",84.4,58.25,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",95.0,58.25,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",5.55,67.35,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",16.6,67.35,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",27.8,67.35,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",38.95,67.35,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",95.0,67.35,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",5.55,77.25,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",16.6,77.25,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",27.8,77.25,5.9,5.9],
+  ["Wild Crops / Plants - In Game Preview","img-015-jpg",38.95,77.25,5.9,5.9],
+  ["Mushroom Colonies - In Game Preview","img-004-png",50.3,67.35,5.9,5.9],
+  ["Mushroom Colonies - In Game Preview","img-004-png",61.65,67.35,5.9,5.9]
+);
+hotspotData["img-000-png"]=hotspotData["img-000-png"].filter(([,target,x,y])=>{
+  const meatTargets=["img-049-png","img-050-png","img-051-png","img-052-png","img-053-png"];
+  return !(meatTargets.includes(target) && y>=86);
+});
+hotspotData["img-000-png"].push(
+  ["Raw Chicken Cuts","img-049-png",95.0,86.15,5.9,5.9],
+  ["Raw Chicken Cuts","img-049-png",5.55,95.05,5.9,5.9],
+  ["Raw Bacon","img-050-png",16.6,95.05,5.9,5.9],
+  ["Raw Bacon","img-050-png",27.8,95.05,5.9,5.9],
+  ["Raw Cod Slice","img-051-png",38.95,95.05,5.9,5.9],
+  ["Raw Cod Slice","img-051-png",50.3,95.05,5.9,5.9],
+  ["Raw Salmon Slice","img-052-png",61.65,95.05,5.9,5.9],
+  ["Raw Salmon Slice","img-052-png",73.05,95.05,5.9,5.9],
+  ["Raw Mutton Chops","img-053-png",84.4,95.05,5.9,5.9],
+  ["Raw Mutton Chops","img-053-png",95.0,95.05,5.9,5.9]
+);
+function disableRegularImageLinks(){
+  document.querySelectorAll('figure.entry:not(#img-000-png):not(#img-001-png) a.image-link').forEach(link=>{
+    const img=link.querySelector('img'); if(!img) return;
+    const frame=document.createElement('div'); frame.className='image-link image-static';
+    link.replaceWith(frame); frame.appendChild(img);
+  });
+}
+function initHotspots(){
+  Object.entries(hotspotData).forEach(([figId,spots])=>{
+    const fig=document.getElementById(figId); if(!fig) return;
+    const oldLink=fig.querySelector('a.image-link'); if(!oldLink || oldLink.classList.contains('hotspot-frame')) return;
+    const img=oldLink.querySelector('img'); if(!img) return;
+    const frame=document.createElement('div'); frame.className='image-link hotspot-frame'; frame.setAttribute('aria-label','Klikalny overview');
+    oldLink.replaceWith(frame); frame.appendChild(img);
+    spots.forEach(([label,target,x,y,w,h])=>{
+      const a=document.createElement('a'); a.className='hotspot'; a.href='#'+target; a.dataset.label=label; a.title=label;
+      a.style.left=x+'%'; a.style.top=y+'%'; a.style.width=w+'%'; a.style.height=h+'%';
+      a.addEventListener('click',ev=>{ev.preventDefault(); const targetEl=document.getElementById(target); if(targetEl) jumpTo(targetEl);});
+      frame.appendChild(a);
+    });
+  });
+  const t=document.getElementById('hotspotToggle');
+  if(t){ t.addEventListener('click',()=>{document.body.classList.toggle('show-hotspots'); t.classList.toggle('active'); t.textContent=document.body.classList.contains('show-hotspots')?'Ukryj klikane pola':'Pokaż klikane pola';}); }
+}
+
+const search=document.getElementById('search'),results=document.getElementById('results'),noResults=document.getElementById('noResults');
+const entries=Array.from(document.querySelectorAll('.entry'));
+const searchAliases=[{label:'Ramen',terms:'ramen',target:'img-045-png'}];
+function norm(t){return (t||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9\s'_-]/g,' ').replace(/\s+/g,' ').trim();}
+const resultIconOverrides={
+  'Cabbage Leaf / Cut Cabbage':'cabbage_leaf.png',
+  'Cabbage On Cutting Board - In Game Preview':'cabbage_leaf.png',
+  'Knives - Description':'flint_knife.png',
+  'Tree Bark':'tree_bark.png',
+  'Food Crate':'cabbage.png',
+  'Rice Bale':'rice_panicle.png',
+  'Straw Bale':'straw.png',
+  'Tomato Vines - Growth / Harvest Preview':'tomato.png',
+  'Tomato Sauce':'tomato_sauce.png',
+  'Wild Crops / Plants - In Game Preview':'cabbage_seeds.png',
+  'Mushroom Colonies - In Game Preview':'brown_mushroom_colony.png',
+  'Raw Chicken Cuts':'chicken_cuts.png',
+  'Cooked Chicken Cuts':'cooked_chicken_cuts.png',
+  'Raw Bacon':'bacon.png',
+  'Cooked Bacon':'cooked_bacon.png',
+  'Raw Cod Slice':'cod_slice.png',
+  'Cooked Cod Slice':'cooked_cod_slice.png',
+  'Raw Salmon Slice':'salmon_slice.png',
+  'Cooked Salmon Slice':'cooked_salmon_slice.png',
+  'Raw Mutton Chops':'mutton_chops.png',
+  'Cooked Mutton Chops':'cooked_mutton_chops.png',
+  'Ramen':'noodle_soup.png'
+};
+function resultIconName(label){
+  if(resultIconOverrides[label]) return resultIconOverrides[label];
+  return label.toLowerCase()
+    .replace(/&#x27;|'/g,'')
+    .replace(/\s*-\s*(in game preview|description|packing recipe).*$/i,'')
+    .replace(/\s*\/\s*/g,' ')
+    .replace(/[^a-z0-9]+/g,'_')
+    .replace(/^_+|_+$/g,'')+'.png';
+}
+function fillResultButton(button,label){
+  const frame=document.createElement('span');
+  frame.className='result-icon-frame';
+  const icon=document.createElement('img');
+  icon.className='result-icon';
+  icon.alt='';
+  icon.loading='lazy';
+  icon.src='item_icons/'+resultIconName(label);
+  icon.onerror=()=>frame.remove();
+  frame.appendChild(icon);
+  const text=document.createElement('span');
+  text.className='result-label';
+  text.textContent=label;
+  button.append(frame,text);
+}
+function jumpTo(e){e.classList.remove('focused'); e.scrollIntoView({behavior:'smooth',block:'start'}); setTimeout(()=>{e.classList.add('focused'); setTimeout(()=>e.classList.remove('focused'),1500);},450); history.replaceState(null,'','#'+e.id);}
+function render(ms,q,aliases=[]){results.innerHTML=''; if(!q&&!ms.length&&!aliases.length){results.classList.remove('active');return;} aliases.forEach(a=>{const target=document.getElementById(a.target); if(!target) return; const b=document.createElement('button'); b.className='result-btn'; b.type='button'; fillResultButton(b,a.label); b.onclick=()=>jumpTo(target); results.appendChild(b);}); ms.slice(0,30-aliases.length).forEach(e=>{const b=document.createElement('button'); b.className='result-btn'; b.type='button'; fillResultButton(b,e.dataset.title); b.onclick=()=>jumpTo(e); results.appendChild(b);}); results.classList.toggle('active',!!results.children.length);}
+function apply(){const q=norm(search.value); entries.forEach(e=>e.classList.remove('is-match')); noResults.classList.remove('active'); if(!q){results.classList.remove('active'); results.innerHTML=''; return [];} const parts=q.split(' ').filter(Boolean); const aliases=searchAliases.filter(a=>parts.every(p=>norm(a.terms+' '+a.label).includes(p))); const ms=entries.filter(e=>{const h=norm(e.dataset.search+' '+e.dataset.title); return parts.every(p=>h.includes(p));}); ms.forEach(e=>e.classList.add('is-match')); const aliasTargets=aliases.map(a=>document.getElementById(a.target)).filter(Boolean); aliasTargets.forEach(e=>e.classList.add('is-match')); if(!ms.length&&!aliases.length) noResults.classList.add('active'); render(ms,q,aliases); return [...aliasTargets,...ms];}
+search.addEventListener('input',apply);
+search.addEventListener('keydown',ev=>{if(ev.key==='Enter'){const m=apply(); if(m[0]) jumpTo(m[0]);} if(ev.key==='Escape'){search.value=''; apply();}});
+document.addEventListener('keydown',ev=>{if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='k'){ev.preventDefault(); search.focus();}});
+const backToTop=document.getElementById('backToTop');
+window.addEventListener('scroll',()=>{backToTop.classList.toggle('visible', window.scrollY>550);});
+backToTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+disableRegularImageLinks();
+initHotspots();
+const params=new URLSearchParams(location.search); const q=params.get('q'); if(q){search.value=q; const m=apply(); if(m[0]) setTimeout(()=>jumpTo(m[0]),300);}
+</script>
+</body>
+</html>

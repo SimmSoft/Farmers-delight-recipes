@@ -1,0 +1,8 @@
+[] poprawić search bar żeby nie pokazywał DOSLOWNIE wszystkiego tylko odpowiednie rzeczy z odpowiednimi nazwami + gdy wybierzemy jakas opcje z search baru to search bar chowa te propozycje dopoki znowu nie klikniem na search bar
+[] Poprawic umiejscoweienie kropek + later zrobić żeby nie było niebieskiego podswietlenia gdy najedzamy/ klikniemy ale to jak wszystko bedzie sie zgadzać
+[] Poukłądać odpowiednio rzeczy jeden pod drugim
+[] Stylizacja paska gornego z custom zdjeciami ala Farmers delight 
+[] Na dole przycisk do wsparcia i jakiegoś memika z paskiem expa + Created by Simmsoft
+[] tłumaczenie PL / ENG ( po lewej w pasku gornym ikonka farmers delight po prawej tekst PL ktory jak sie kliknie to bedzie ENG )
+[] Cashe zdjec zeby nie pobierało za każdym razem gdy ponownie za jakis czas się wchodzi (lazy loading czy jakos tak też można ale to tlyko 7mb łącznie wiec niech wchodzi na strone ale niech priorytet pobierania zdjec mają te 2 głowne i ikonki a pozniej to te zdjecia po kolei ale jezeli przeskoczy w trakcie do jakiejs rzeczy to priorytet maja rzeczy ktore maja sie wyswietlić)
+[] WIP KSIĄZKA Z PRZEPISAMI DO FAMRERS DELIGHT?
